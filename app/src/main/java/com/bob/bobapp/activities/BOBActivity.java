@@ -18,6 +18,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -133,7 +134,18 @@ public class BOBActivity extends BaseActivity {
 
         context = this;
 
-        authenticateUser();
+        String ucc = getExtraData();
+
+        authenticateUser(ucc);
+    }
+
+    private String getExtraData(){
+
+        BOBIntent intent = new BOBIntent(getIntent());
+
+        Log.d("HomeActivity", "username: " + intent.getUsername());
+
+        return intent.getUsername();
     }
 
     @Override
@@ -772,9 +784,11 @@ public class BOBActivity extends BaseActivity {
         });
     }
 
-    private void authenticateUser() {
+    private void authenticateUser(String ucc) {
 
-        AuthenticateRequest.createAuthenticateRequestObject("false", "069409856", "true", "14", "0", "0");
+        //AuthenticateRequest.createAuthenticateRequestObject("false", "069409856", "true", "14", "0", "0");
+
+        AuthenticateRequest.createAuthenticateRequestObject("false", ucc, "true", "14", "0", "0");
 
         util.showProgressDialog(context, true);
 
