@@ -143,9 +143,15 @@ public class BOBActivity extends BaseActivity {
 
         BOBIntent intent = new BOBIntent(getIntent());
 
-        Log.d("HomeActivity", "username: " + intent.getUsername());
+        Log.d("BOBActivity", "customer id: " + intent.getCustomerId());
 
-        return intent.getUsername();
+        Log.d("BOBActivity", "login session id: " + intent.getLoginSessionId());
+
+        Log.d("BOBActivity", "heartbeat token: " + intent.getHeartbeatToken());
+
+        Log.d("BOBActivity", "channel id: " + intent.getChannelId());
+
+        return intent.getCustomerId();
     }
 
     @Override
