@@ -19,14 +19,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class AccountListAdapter extends RecyclerView.Adapter<AccountListAdapter.ViewHolder> {
-
     private boolean isSamePosion = false;
-
 
     private ArrayList<String> selectedDataList;
 
-
     private Context context;
+
     private List<AccountResponseObject> arrayList;
 
     public AccountListAdapter(Context context, List<AccountResponseObject> holdingArrayList) {
