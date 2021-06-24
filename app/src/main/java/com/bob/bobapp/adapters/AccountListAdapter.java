@@ -27,6 +27,7 @@ public abstract class AccountListAdapter extends RecyclerView.Adapter<AccountLis
 
     private List<AccountResponseObject> arrayList;
 
+
     public AccountListAdapter(Context context, List<AccountResponseObject> holdingArrayList) {
         this.context = context;
         this.arrayList = holdingArrayList;
