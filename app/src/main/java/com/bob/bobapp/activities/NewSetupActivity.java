@@ -28,14 +28,11 @@ public class NewSetupActivity extends AppCompatActivity implements View.OnClickL
     /// listener
     @Override
     public void onClick(View v) {
-        switch (v.getId())
-        {
-            case R.id.txtNext:
-            {
-                Intent intent = new Intent(getApplicationContext(), NewWealthMgmtActivity.class);
-                startActivity(intent);
-                break;
-            }
+        int id = v.getId();
+        if (id == R.id.txtNext) {
+            Intent intent = new Intent(getApplicationContext(), NewWealthMgmtActivity.class);
+            startActivity(intent);
         }
+
     }
 }
