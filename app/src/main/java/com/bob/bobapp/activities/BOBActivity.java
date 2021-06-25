@@ -2,7 +2,10 @@ package com.bob.bobapp.activities;
 
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTabHost;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import retrofit2.Call;
@@ -24,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -60,6 +64,8 @@ import com.bob.bobapp.api.response_object.AuthenticateResponse;
 import com.bob.bobapp.api.response_object.InvestmentMaturityModel;
 import com.bob.bobapp.api.response_object.NotificationObject;
 import com.bob.bobapp.api.response_object.RMDetailResponseObject;
+import com.bob.bobapp.fragments.ReportFragment;
+import com.bob.bobapp.fragments.SetUpFragment;
 import com.bob.bobapp.utility.Constants;
 import com.bob.bobapp.utility.FontManager;
 import com.bob.bobapp.utility.SettingPreferences;
@@ -78,6 +84,7 @@ import java.util.UUID;
 import static android.graphics.Typeface.BOLD;
 
 public class BOBActivity extends BaseActivity {
+
 
     private ArrayList<InvestmentMaturityModel> investmentMaturityModelArrayList;
 
@@ -107,7 +114,7 @@ public class BOBActivity extends BaseActivity {
 
     private TextView tvRMUsername, tvRMName, tvRMEmail, tvRMMobileNumber;
 
-    public static TextView tvBellHeader, tvCartHeader,title,tvUserHeader, tvMenu;
+    public static TextView tvBellHeader, tvCartHeader, title, tvUserHeader, tvMenu;
 
     private Util util;
 
@@ -137,9 +144,10 @@ public class BOBActivity extends BaseActivity {
         String ucc = getExtraData();
 
         authenticateUser(ucc);
+
     }
 
-    private String getExtraData(){
+    private String getExtraData() {
 
         BOBIntent intent = new BOBIntent(getIntent());
 
@@ -152,6 +160,7 @@ public class BOBActivity extends BaseActivity {
         Log.d("BOBActivity", "channel id: " + intent.getChannelId());
 
         return intent.getCustomerId();
+
     }
 
     @Override
@@ -165,7 +174,7 @@ public class BOBActivity extends BaseActivity {
 
         FontManager.markAsIconContainer(tvMenu, util.iconFont);
 
-    //    tvMenu.setBackgroundResource(R.mipmap.menu);
+        //    tvMenu.setBackgroundResource(R.mipmap.menu);
 
     }
 
@@ -290,7 +299,7 @@ public class BOBActivity extends BaseActivity {
         onBackData();
     }
 
-    private void hideKeyboard(){
+    private void hideKeyboard() {
 
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -336,9 +345,9 @@ public class BOBActivity extends BaseActivity {
 
         textView.setText(title);
 
-        textView.setPadding(70,20,10,10);
+        textView.setPadding(70, 20, 10, 10);
 
-        textView.setTypeface(null,BOLD);
+        textView.setTypeface(null, BOLD);
 
         textView.setTextSize(18);
 
@@ -405,11 +414,11 @@ public class BOBActivity extends BaseActivity {
 
         } else if (id == R.id.btn_submit) {
 
-        }else if (id == R.id.imgBack) {
+        } else if (id == R.id.imgBack) {
 
             finish();
 
-        }else if (id == R.id.imgDashbaord) {
+        } else if (id == R.id.imgDashbaord) {
 
             alertboxExitFromApp("Alert!", "Are you sure? Do you want to exit from app?");
         }
@@ -803,46 +812,61 @@ public class BOBActivity extends BaseActivity {
 
     @Subscribe
     public void getAuthenticateResponse(AuthenticateResponse authenticateResponse) {
+        try {
+            if (authenticateResponse != null) {
+                this.authenticateResponse = authenticateResponse;
 
-        if (authenticateResponse != null) {
+                authResponse = authenticateResponse;
 
-            this.authenticateResponse = authenticateResponse;
+                String response = new Gson().toJson(authResponse);
 
-            authResponse = authenticateResponse;
+                Log.d("auth", response);
 
-            tvUsername.setText(authenticateResponse.getUserName());
 
-            RequestBodyObject requestBodyObject = new RequestBodyObject();
+                tvUsername.setText(authenticateResponse.getUserName());
 
-            requestBodyObject.setUserId(authenticateResponse.getUserID());
+                RequestBodyObject requestBodyObject = new RequestBodyObject();
 
-            requestBodyObject.setUserType(authenticateResponse.getUserType());
+                requestBodyObject.setUserId(authenticateResponse.getUserID());
 
-            requestBodyObject.setUserCode(authenticateResponse.getUserCode());
+                requestBodyObject.setUserType(authenticateResponse.getUserType());
 
-            requestBodyObject.setLastBusinessDate(authenticateResponse.getBusinessDate());
+                requestBodyObject.setUserCode(authenticateResponse.getUserCode());
 
-            requestBodyObject.setCurrencyCode("1"); //For INR
+                requestBodyObject.setLastBusinessDate(authenticateResponse.getBusinessDate());
 
-            requestBodyObject.setAmountDenomination("0"); //For base
+                requestBodyObject.setCurrencyCode("1"); //For INR
 
-            requestBodyObject.setAccountLevel("0"); //For client
+                requestBodyObject.setAmountDenomination("0"); //For base
 
-            UUID uuid = UUID.randomUUID();
+                requestBodyObject.setAccountLevel("0"); //For client
 
-            String uniqueIdentifier = String.valueOf(uuid);
+                if ((authenticateResponse.getClientUCC() != null)) {
+                    UUID uuid = UUID.randomUUID();
 
-            SettingPreferences.setRequestUniqueIdentifier(context, uniqueIdentifier);
+                    String uniqueIdentifier = String.valueOf(uuid);
 
-            ClientHoldingRequest.createClientHoldingRequestObject(uniqueIdentifier, Constants.SOURCE, requestBodyObject);
+                    SettingPreferences.setRequestUniqueIdentifier(context, uniqueIdentifier);
 
-            WebService.action(context, Constants.ACTION_CLIENT_HOLDING);
+                    ClientHoldingRequest.createClientHoldingRequestObject(uniqueIdentifier, Constants.SOURCE, requestBodyObject);
 
-        } else {
-
-            util.showProgressDialog(context, false);
+                    WebService.action(context, Constants.ACTION_CLIENT_HOLDING);
+                } else {
+                    util.showProgressDialog(context, false);
+                    Intent intent = new Intent(getApplicationContext(), NewSetupActivity.class);
+                    startActivity(intent);
+                    finish();
+//
+                }
+            } else {
+                util.showProgressDialog(context, false);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+
     }
+
 
     @Subscribe
     public void getHoldingResponse(ArrayList<ClientHoldingObject> clientHoldingObjectArrayList) {
@@ -906,6 +930,11 @@ public class BOBActivity extends BaseActivity {
         }
 
         return null;
+    }
+
+    public void replaceFragment(Fragment fragment) {
+
+        ((BaseContainerFragment) fragment.getParentFragment()).replaceFragment(fragment, true);
     }
 }
 

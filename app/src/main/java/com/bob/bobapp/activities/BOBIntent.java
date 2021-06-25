@@ -1,5 +1,4 @@
 package com.bob.bobapp.activities;
-
 import android.content.Context;
 import android.content.Intent;
 

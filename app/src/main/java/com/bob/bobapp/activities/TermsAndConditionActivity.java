@@ -68,7 +68,7 @@ public class TermsAndConditionActivity extends BaseFragment {
     // initialize object here...
     private void findView(View view) {
 
-      //  txtNext=findViewById(R.id.txtNext);
+        //  txtNext=findViewById(R.id.txtNext);
         util = new Util(context);
 
     }

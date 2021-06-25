@@ -69,8 +69,8 @@ public class SetUpFragment extends BaseFragment {
 
 
     @Override
-    public void onClick(View view) {
-
+    public void onClick(View view)
+    {
         if (view.getId() == R.id.txtNext) {
 
             replaceFragment(new WealthMgmtActivity());
@@ -79,6 +79,7 @@ public class SetUpFragment extends BaseFragment {
 
             getActivity().onBackPressed();
         }
+
     }
 
     public void replaceFragment(Fragment fragment) {

@@ -3,6 +3,7 @@ package com.bob.bobapp.api;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.util.Log;
 
 import com.bob.bobapp.BOBApp;
 import com.bob.bobapp.api.bean.ClientHoldingObject;
@@ -115,13 +116,24 @@ public class WebService extends IntentService {
     }
 
     private void getAuthenticateResponse() {
+        String request = new Gson().toJson(AuthenticateRequest.getAuthenticateRequestObject());
 
+        System.out.println("PLAIN Aythenticatd REQUEST :" +request);
         apiInterface.getAuthenticateResponse(AuthenticateRequest.getAuthenticateRequestObject()).enqueue(new Callback<AuthenticateResponse>() {
+
 
             @Override
             public void onResponse(@NonNull Call<AuthenticateResponse> call, @NonNull Response<AuthenticateResponse> response) {
+                try
+                {
+                    EventBus.getDefault().post(response.body());
+                }
+                catch (Exception ex)
+                {
+                    Log.d("hhj",ex.getLocalizedMessage());
+                    ex.printStackTrace();
+                }
 
-                EventBus.getDefault().post(response.body());
             }
 
             @Override
